@@ -4,27 +4,28 @@ import pytest
 
 @pytest.fixture()
 def mqtt_host():
-    return os.getenv('MQTT_HOST')
+    return os.getenv('MQTT_HOST').strip()
 
 
 @pytest.fixture()
 def mqtt_port():
-    return os.getenv('MQTT_PORT')
+    return int(os.getenv('MQTT_PORT', '1883').strip())
 
 
 @pytest.fixture()
 def mqtt_user():
-    return os.getenv('MQTT_USER')
+    return os.getenv('MQTT_USER').strip()
 
 
 @pytest.fixture()
 def mqtt_pwd():
-    return os.getenv('MQTT_PWD')
+    return os.getenv('MQTT_PWD').strip()
 
 
 @pytest.fixture()
 def mqtt_use_ssl():
-    return os.getenv('MQTT_USE_SSL', False)
+    val = os.getenv('MQTT_USE_SSL', 'false').strip().lower()
+    return val == 'true' or val == '1'
 
 
 class TestSensors:
