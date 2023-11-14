@@ -28,13 +28,6 @@ def mqtt_use_ssl():
     return val == 'true' or val == '1'
 
 
-class TestSensors:
-    pass
-
-
-class TestAPI:
-    pass
-
-
-class TestClient:
-    pass
+class TestStub:
+    def test_42(mqtt_host, mqtt_port, mqtt_user, mqtt_pwd, mqtt_use_ssl):
+        assert 42 == 42
