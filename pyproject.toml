@@ -18,7 +18,7 @@ classifiers = [
 ]
 dependencies = [
     "paho-mqtt==1.6.1",
-    "python-dotenv==1.0.0",
+    "envyaml==1.10.211231",
 ]
 
 [project.urls]
