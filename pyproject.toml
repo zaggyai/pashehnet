@@ -19,11 +19,15 @@ classifiers = [
 dependencies = [
     "paho-mqtt==1.6.1",
     "envyaml==1.10.211231",
+    "fire==0.5.0",
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/zaggyai/pashehnet"
 "Bug Tracker" = "https://github.com/zaggyai/pashehnet/issues"
+
+[project.scripts]
+pashehnet = "pashehnet:cli_main"
 
 [tool.pytest.ini_options]
 addopts = [

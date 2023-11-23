@@ -161,3 +161,6 @@ cython_debug/
 
 # Local env vars via direnv
 .envrc
+
+# Local config
+config.yaml
