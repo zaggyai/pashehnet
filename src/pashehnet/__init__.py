@@ -1,1 +1,1 @@
-# from .client import HSDClient  # noqa: F401
+from .cli import cli_main  # noqa: F401
