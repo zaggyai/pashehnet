@@ -19,49 +19,60 @@ logging.getLogger().setLevel(
 )
 
 
+class ConfigurationError(Exception):
+    pass
+
+
 class Runner(object):
     """
     Provides a wrapper to create the network and kick off the simulation from
     a command line interface
     """
-    DEFAULT_CONFIG_FNAME = './config.yaml'
     CURRENT_CONFIG_VERSION = 1
+    DEFAULT_CONFIG_FNAME = 'config.yaml'
 
-    def run(self, config_fname=DEFAULT_CONFIG_FNAME):
+    def __init__(self, config=DEFAULT_CONFIG_FNAME):
+        """
+        :param config_fname: Network configuration filename
+        """
+        self.config_file = config
+
+    def run(self):
         """
         Create and run the network simulation
-        :param config_fname: Network configuration filename
         :return: None
         """
         logging.debug('Starting runner')
         try:
-            config = self._load_config(config_fname)  # noqa: F841
-        except AssertionError as e:
+            config = self._load_config(self.config_file)  # noqa: F841
+        except Exception as e:
             logging.error(e)
 
-    def check(self, config_fname=DEFAULT_CONFIG_FNAME):
+    def check(self):
         """
         Load and validate network configuration, without creating or running it
-        :param config_fname: Network configuration filename
         :return: None
         """
         logging.debug('Starting configuration check')
         try:
-            config = self._load_config(config_fname)  # noqa: F841
-        except AssertionError as e:
+            config = self._load_config(self.config_file)  # noqa: F841
+        except Exception as e:
             logging.error(e)
 
     @staticmethod
-    def _load_config(config_fname):
+    def _load_config(config_file):
         """
         Load and validate the given configuration filename
         :param config_fname: Network configuration filename
         :return: Loaded config
         """
-        logging.debug(f'Loading configuration file: {config_fname}')
-        config = EnvYAML(config_fname)
-        Runner._validate_config(config)
-        return config
+        logging.debug(f'Loading configuration file: {config_file}')
+        try:
+            config = EnvYAML(config_file)
+            Runner._validate_config(config)
+            return config
+        except Exception as e:
+            raise ConfigurationError(str(e))
 
     @staticmethod
     def _validate_config(config):
@@ -77,5 +88,4 @@ class Runner(object):
 
 
 def cli_main():
-    runner = Runner()
-    fire.Fire(runner)
+    fire.Fire(Runner)
