@@ -1,4 +1,5 @@
 import os
+
 import pytest
 
 
@@ -28,6 +29,6 @@ def mqtt_use_ssl():
     return val == 'true' or val == '1'
 
 
-class TestStub:
-    def test_42(mqtt_host, mqtt_port, mqtt_user, mqtt_pwd, mqtt_use_ssl):
+class TestMQTT:
+    def test_noop(self):
         assert 42 == 42

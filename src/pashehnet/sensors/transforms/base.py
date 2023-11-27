@@ -1,5 +1,7 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 
 class SensorTransformBase(ABC):
-    pass
+    @abstractmethod
+    def transform(self, value):
+        ...

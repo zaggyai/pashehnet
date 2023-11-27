@@ -46,7 +46,7 @@ jobs:
         MQTT_PWD: ${{ secrets.MQTT_PWD }}
         MQTT_USE_SSL: ${{ secrets.MQTT_USE_SSL }}
       run: |
-        pytest
+        pytest -W ignore::DeprecationWarning
     - name: Build package
       run: |
         python -m build

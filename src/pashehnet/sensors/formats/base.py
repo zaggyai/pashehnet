@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class SensorTypeBase(ABC):
+class SensorFormatBase(ABC):
     @abstractmethod
-    def format_value(self, value):
+    def transform(self, value):
         ...

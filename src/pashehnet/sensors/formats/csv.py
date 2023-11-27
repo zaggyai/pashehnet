@@ -1,13 +1,13 @@
-from .base import SensorTypeBase
+from .base import SensorFormatBase
 
 
-class CSVType(SensorTypeBase):
+class CSVFormat(SensorFormatBase):
     def __init__(self, prefix_fields, value_field, headers=True):
         self.prefix_fields = prefix_fields
         self.value_field = value_field
         self.headers = headers
 
-    def format_value(self, value):
+    def transform(self, value):
         lines = []
         keys = self.prefix_fields.keys()
         values = self.prefix_fields.values()
