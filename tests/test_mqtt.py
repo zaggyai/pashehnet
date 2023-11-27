@@ -5,7 +5,7 @@ import pytest
 
 @pytest.fixture()
 def mqtt_host():
-    return os.getenv('MQTT_HOST').strip()
+    return os.getenv('MQTT_HOST', 'localhost').strip()
 
 
 @pytest.fixture()
