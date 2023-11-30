@@ -20,7 +20,7 @@ dependencies = [
     "paho-mqtt~=1.6",
     "envyaml~=1.10",
     "fire~=0.5",
-    "scipy~=1.11",
+    "scipy~=1.10",
 ]
 
 [project.urls]
