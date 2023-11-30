@@ -1,3 +1,5 @@
+from queue import SimpleQueue
+
 from .base import SensorSourceBase
 from scipy.signal import sweep_poly
 
@@ -18,8 +20,11 @@ class SweepPolySource(SensorSourceBase):
         self.t = t
         self.poly = poly
         self.phi = phi
-        self.sample = sweep_poly(t, poly, phi)
-        self.next_idx = 0
+
+        # Leverage Python core FIFO queue for infinite cycle sample
+        self.sample = SimpleQueue()
+        for x in sweep_poly(t, poly, phi):
+            self.sample.put(x)
 
     def __iter__(self):
         """
@@ -33,8 +38,6 @@ class SweepPolySource(SensorSourceBase):
         Implementation for iterator
         :return: Next value from source
         """
-        if self.next_idx >= len(self.sample):
-            self.next_idx = 0
-        val = self.sample[self.next_idx]
-        self.next_idx += 1
+        val = self.sample.get()
+        self.sample.put(val)
         return val
