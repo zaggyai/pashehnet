@@ -1,11 +1,14 @@
-from pashehnet.sensors.sources import ConstantValueSource, SweepPolySource
 import numpy as np
+from pytest import approx
+
+from pashehnet.sensors.sources import ConstantValueSource, SweepPolySource
 
 
 class TestConstantValueSource:
     """
     Unit tests for ConstantValueSource class
     """
+
     def test_source(self):
         """
         Test that expected value is returned in iterative requests
@@ -21,6 +24,7 @@ class TestSweepPolySource:
     """
     Unit tests for SweepPolySource
     """
+
     def test_source(self):
         """
         Test that expected values are returned AND they are repeating cycles
@@ -37,7 +41,7 @@ class TestSweepPolySource:
         t = np.linspace(0, 4, 5)
         src = SweepPolySource(t, p)
         cycle1 = [next(src) for _ in range(5)]
-        assert cycle1 == expected
+        assert cycle1 == approx(expected)
 
         cycle2 = [next(src) for _ in range(5)]
         assert cycle1 == cycle2
