@@ -1,7 +1,8 @@
 from queue import SimpleQueue
 
-from .base import SensorSourceBase
 from scipy.signal import sweep_poly
+
+from .base import SensorSourceBase
 
 
 class SweepPolySource(SensorSourceBase):
@@ -10,6 +11,7 @@ class SweepPolySource(SensorSourceBase):
     See:
     https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.sweep_poly.html
     """
+
     def __init__(self, t, poly, phi=0):
         """
         Construct new object
