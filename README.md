@@ -15,6 +15,8 @@ pip install git+ssh://git@github.com/zaggyai/pashehnet
 
 ## Contributing
 
+First, clone the repo!  :)
+
 Make sure your virtual env is up-to-date:
 ```bash
 pip install --upgrade pip wheel setuptools
