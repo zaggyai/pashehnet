@@ -20,7 +20,7 @@ class TestDropoutTransform:
 
     def test_duration(self):
         d = 3
-        xform = DropoutTransform(prob=0.05, value=1, duration=d)
+        xform = DropoutTransform(prob=0.1, value=1, duration=d)
         sample = [xform.transform(x) for x in [0] * 100]
         runs = self._runs_of_ones_list(sample)
         assert max(runs) >= d
@@ -65,7 +65,7 @@ class TestStuckTransform:
 
     def test_duration(self):
         d = 3
-        xform = StuckTransform(prob=0.05, value=1, duration=d)
+        xform = StuckTransform(prob=0.1, value=1, duration=d)
         sample = [xform.transform(x) for x in [0] * 100]
         runs = self._runs_of_ones_list(sample)
         assert max(runs) >= d
