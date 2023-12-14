@@ -1,10 +1,12 @@
 import logging
-import multiprocessing
 import os
 import signal
 import sys
+from collections import namedtuple
 from multiprocessing import Process
-from time import sleep
+
+from pashehnet import Sensor
+from pashehnet.targets import SensorTargetBase
 
 ########################################
 # Set up logging
@@ -19,53 +21,65 @@ logging.getLogger().setLevel(
     )
 )
 
+TopicSensor = namedtuple('TopicSensor', ['topic', 'sensor'])
+
 
 class SensorProcess(Process):
-    def signal_handler(self, sig, frame):
-        logging.debug('SensorProcess closing')
-        sys.exit(1)
+    def __init__(self, target: SensorTargetBase, topic, sensor: Sensor):
+        super(SensorProcess, self).__init__()
+        self.target = target
+        self.topic = topic
+        self.sensor = sensor
+        self.kill_now = False
+
+        signal.signal(signal.SIGINT, self.exit_gracefully)
+        signal.signal(signal.SIGTERM, self.exit_gracefully)
+
+    def exit_gracefully(self, signum, frame):
+        print(
+            f'SensorProcess terminating: {self.topic} // {self.sensor}'
+        )
+        self.kill_now = True
 
     def run(self):
-        signal.signal(signal.SIGINT, self.signal_handler)
-        signal.signal(signal.SIGTERM, self.signal_handler)
-        super.run()
+        while not self.kill_now:
+            print('getting next payload')
+            payload = next(self.sensor)
+            self.target.send(self.topic, payload)
 
 
 class SensorNetwork(object):
-    def __init__(self, target, sensors=[]):
+    def __init__(self, target):
         self.sensors = []
         self.sensor_procs = []
         self.target = target
         self.running = False
-        self.add_sensors(sensors)
 
-    def add_sensor(self, sensor):
+    def add_sensor(self, topic, sensor):
         if not self.running:
-            self.sensors.append(sensor)
+            self.sensors.append(TopicSensor(topic, sensor))
 
-    def add_sensors(self, sensors):
+    def add_sensors(self, topic, sensors):
         for sensor in sensors:
-            self.add_sensor(sensor)
+            self.add_sensor(topic, sensor)
 
     def start(self):
         try:
-            self.sensor_procs = [
-                multiprocessing.Process(target=self._proc_fn, args=(sensor))
-                for
-                sensor in self.sensors
-            ]
-
+            for (topic, sensor) in self.sensors:
+                self.sensor_procs.append(SensorProcess(
+                    target=self.target,
+                    topic=topic,
+                    sensor=sensor
+                ))
             for p in self.sensor_procs:
+                print(
+                    f'SensorProcess starting: {p.topic} // {p.sensor}'
+                )
                 p.start()
-
+            print(f'Started {len(self.sensor_procs)} sensor processes.')
             self.running = True
         except Exception as e:
             logging.error(str(e))
-
-    @staticmethod
-    def _proc_fn(sensor):
-        while True:
-            sleep(1)
 
     def stop(self):
         try:

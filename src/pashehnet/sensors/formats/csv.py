@@ -2,8 +2,8 @@ from .base import SensorFormatBase
 
 
 class CSVFormat(SensorFormatBase):
-    def __init__(self, prefix_fields, value_field, headers=True):
-        self.prefix_fields = prefix_fields
+    def __init__(self, prefix_fields=None, value_field='value', headers=True):
+        self.prefix_fields = prefix_fields or {}
         self.value_field = value_field
         self.headers = headers
 

@@ -30,5 +30,5 @@ class TestSensor:
         :param cv_source: ConstantValueSource fixture
         :param csv_format: CSVFormat fixture
         """
-        sensor = Sensor(source=cv_source, format=csv_format)
+        sensor = Sensor(0, source=cv_source, format=csv_format)
         assert 'a,b,value\n1,2,42' == next(sensor)
