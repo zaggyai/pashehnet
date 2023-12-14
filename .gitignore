@@ -164,3 +164,4 @@ cython_debug/
 
 # Local config
 config.yaml
+VENV

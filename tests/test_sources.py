@@ -1,11 +1,14 @@
 import numpy as np
 from pytest import approx
-from scipy.signal import chirp
+from scipy import signal
 
 from pashehnet.sensors.sources import (
     ConstantValueSource,
     SweepPolySource,
-    UnitImpulseSource, ChirpSource
+    UnitImpulseSource, 
+    ChirpSource,
+    SquareWaveSource,
+    SawtoothWaveSource
 )
 
 
@@ -24,6 +27,59 @@ class TestConstantValueSource:
         values = [next(src) for i in range(10)]
         assert all(v == val for v in values)
 
+
+class TestSquareWaveSource:
+    """
+    Unit tests for SquareWaveSource class
+    """
+
+    def test_source(self):
+        """
+        Test that expected square wave values are returned in iterative requests
+        """
+        # Test parameters
+        frequency, sample_rate, duty_cycle = 5, 500, 0.5
+
+        # Create SquareWaveSource object
+        src = SquareWaveSource(frequency, sample_rate, duty_cycle)
+
+        # Generate values from the SquareWaveSource
+        generated_values = [next(src) for i in range(sample_rate)]
+
+        # Generate expected values
+        t = np.linspace(0, 1, sample_rate, endpoint=False)
+        expected_values = signal.square(2 * np.pi * frequency * t, duty=duty_cycle)
+
+        # Compare generated values with expected values
+        assert generated_values == approx(expected_values)
+
+
+class TestSawtoothWaveSource:
+    """
+    Unit tests for SawtoothWaveSource class
+    """
+
+    def test_source(self):
+        """
+        Test that expected square wave values are returned in iterative requests
+        """
+        # Test parameters
+        frequency, sample_rate, width = 5, 10, 0.5
+
+        # Create SawtoothWaveSource object
+        src = SawtoothWaveSource(frequency, sample_rate, width)
+
+        # Generate values from the SquareWaveSource
+        generated_values = [next(src) for i in range(sample_rate)]
+
+        # Generate expected values
+        t = np.linspace(0, 1, sample_rate, endpoint=False)
+        expected_values = signal.sawtooth(2 * np.pi * frequency * t, width=width)
+        
+
+        # Compare generated values with expected values
+        assert generated_values == approx(expected_values)
+        
 
 class TestSweepPolySource:
     """
@@ -118,7 +174,7 @@ class TestChirpSource:
         Util method to wrap common test harness for different methods
         """
         t = np.linspace(0, 10, 1500)
-        w = chirp(t, f0=6, f1=1, t1=5, method=method)
+        w = signal.chirp(t, f0=6, f1=1, t1=5, method=method)
 
         src = ChirpSource(t, f0=6, f1=1, t1=5, method=method)
         sample = [next(src) for _ in range(len(t))]
@@ -128,7 +184,7 @@ class TestChirpSource:
     def test_phi(self):
         phi = 90
         t = np.linspace(0, 10, 1500)
-        w = chirp(t, f0=6, f1=1, t1=5, method='linear', phi=phi)
+        w = signal.chirp(t, f0=6, f1=1, t1=5, method='linear', phi=phi)
 
         src = ChirpSource(t, f0=6, f1=1, t1=5, method='linear', phi=phi)
         sample = [next(src) for _ in range(len(t))]
@@ -137,7 +193,7 @@ class TestChirpSource:
 
     def test_vertex_zero(self):
         t = np.linspace(0, 10, 1500)
-        w = chirp(t, f0=6, f1=1, t1=5, method='quadratic', vertex_zero=False)
+        w = signal.chirp(t, f0=6, f1=1, t1=5, method='quadratic', vertex_zero=False)
 
         src = ChirpSource(t, f0=6, f1=1, t1=5, method='quadratic', vertex_zero=False)
         sample = [next(src) for _ in range(len(t))]
