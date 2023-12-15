@@ -36,14 +36,10 @@ class SensorProcess(Process):
         signal.signal(signal.SIGTERM, self.exit_gracefully)
 
     def exit_gracefully(self, signum, frame):
-        print(
-            f'SensorProcess terminating: {self.topic} // {self.sensor}'
-        )
         self.kill_now = True
 
     def run(self):
         while not self.kill_now:
-            print('getting next payload')
             payload = next(self.sensor)
             self.target.send(self.topic, payload)
 
@@ -72,11 +68,14 @@ class SensorNetwork(object):
                     sensor=sensor
                 ))
             for p in self.sensor_procs:
-                print(
+                logging.debug(
                     f'SensorProcess starting: {p.topic} // {p.sensor}'
                 )
                 p.start()
-            print(f'Started {len(self.sensor_procs)} sensor processes.')
+
+            logging.debug(
+                f'Started {len(self.sensor_procs)} sensor processes.'
+            )
             self.running = True
         except Exception as e:
             logging.error(str(e))
@@ -84,11 +83,20 @@ class SensorNetwork(object):
     def stop(self):
         try:
             for p in self.sensor_procs:
+                logging.debug(
+                    f'SensorProcess terminating: {p.topic} // {p.sensor}'
+                )
                 p.terminate()
 
             for p in self.sensor_procs:
+                logging.debug(
+                    f'SensorProcess joining: {p.topic} // {p.sensor}'
+                )
                 p.join()
 
+            logging.debug(
+                f'Terminated {len(self.sensor_procs)} sensor processes.'
+            )
             self.running = False
         except Exception as e:
             logging.error(str(e))

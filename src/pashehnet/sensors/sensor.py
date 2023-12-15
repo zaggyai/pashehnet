@@ -36,18 +36,14 @@ class Sensor(object):
         Implementation for iterator
         :return: Next value from sensor stream
         """
-        print(f'sleeping for {self.delay}')
         time.sleep(self.delay)
 
         # Get next value from source iterator
-        print('getting value')
         value = next(self.source)
 
         # Apply all transforms in order provided, if given
-        print('xform value')
         for xform in self.transforms:
             value = xform.transform(value)
 
         # Format final output
-        print('formatting value')
         return self.format.transform(value)

@@ -1,4 +1,4 @@
-import logging
+import multiprocessing
 import time
 from collections import namedtuple
 
@@ -12,42 +12,41 @@ from pashehnet.targets import SensorTargetBase
 
 
 @pytest.fixture()
+def mp_queue():
+    return multiprocessing.Queue()
 
-
-q = multiprocessing.Queue()
 
 @pytest.fixture()
-def target():
-    return MockSensorTarget()
+def target(mp_queue):
+    return MockSensorTarget(mp_queue)
 
 
 TopicPayload = namedtuple('TopicPayload', ['topic', 'payload'])
 
 
 class MockSensorTarget(SensorTargetBase):
-    def __init__(self):
+    def __init__(self, mp_queue):
         super().__init__()
-        self.log = []
+        self.log = mp_queue
 
     def send(self, topic, payload):
-        print('sending')
-        self.log.append(TopicPayload(topic, payload))
+        self.log.put(TopicPayload(topic, payload))
 
 
 class TestNetwork:
-    def test_network(self, target, caplog):
+    def test_network(self, target, mp_queue):
         topic = 'foo'
         id = 'bar'
         source = ConstantValueSource(42)
         format = CSVFormat(headers=False)
-        sensor = Sensor(id, source=source, format=format)
+        sensor = Sensor(id, source=source, format=format, frequency=10)
 
         network = SensorNetwork(target)
         network.add_sensor(topic, sensor)
 
         network.start()
-        time.sleep(5)
+        time.sleep(3)
         network.stop()
 
         print(f'target log: {target.log}')
-        assert 0 < len(target.log)
+        assert not target.log.empty()
