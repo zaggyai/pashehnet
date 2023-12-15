@@ -195,7 +195,8 @@ class TestChirpSource:
         t = np.linspace(0, 10, 1500)
         w = signal.chirp(t, f0=6, f1=1, t1=5, method='quadratic', vertex_zero=False)
 
-        src = ChirpSource(t, f0=6, f1=1, t1=5, method='quadratic', vertex_zero=False)
+        src = ChirpSource(t, f0=6, f1=1, t1=5, method='quadratic',
+                          vertex_zero=False)
         sample = [next(src) for _ in range(len(t))]
 
         assert all(sample == w)
