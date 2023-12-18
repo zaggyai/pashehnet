@@ -2,6 +2,7 @@ import numpy as np
 from scipy import signal
 from .base import SensorSourceBase
 
+
 class SquareWaveSource(SensorSourceBase):
     """
     Provides a square wave source using scipy.signal.square
@@ -30,8 +31,15 @@ class SquareWaveSource(SensorSourceBase):
         Implementation for iterator
         :return: Next value from the square wave source
         """
-        t = np.linspace(self.time, self.time + 1/self.sample_rate, 2, endpoint=False)
-        square_wave = signal.square(2 * np.pi * self.frequency * t, duty=self.duty_cycle)[0]
+        t = np.linspace(
+            self.time,
+            self.time + 1/self.sample_rate,
+            2,
+            endpoint=False
+        )
+        square_wave = signal.square(
+            2 * np.pi * self.frequency * t,
+            duty=self.duty_cycle
+        )[0]
         self.time += 1/self.sample_rate
         return square_wave
-
