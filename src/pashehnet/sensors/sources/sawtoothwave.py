@@ -20,13 +20,6 @@ class SawtoothWaveSource(SensorSourceBase):
         self.width = width
         self.time = 0
 
-    def __iter__(self):
-        """
-        Implementation for iterator
-        :return: Self
-        """
-        return self
-
     def __next__(self):
         """
         Implementation for iterator

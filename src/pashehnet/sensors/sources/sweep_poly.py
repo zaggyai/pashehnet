@@ -28,13 +28,6 @@ class SweepPolySource(SensorSourceBase):
         for x in sweep_poly(t, poly, phi):
             self.sample.put(x)
 
-    def __iter__(self):
-        """
-        Implementation for iterator
-        :return: Self
-        """
-        return self
-
     def __next__(self):
         """
         Implementation for iterator
