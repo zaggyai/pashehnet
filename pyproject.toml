@@ -22,6 +22,7 @@ dependencies = [
     "fire~=0.5",
     "scipy~=1.10",
     "smart-open==6.4.0",
+    "pandas==2.1.4",
 ]
 
 [project.urls]
