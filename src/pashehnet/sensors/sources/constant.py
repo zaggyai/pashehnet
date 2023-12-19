@@ -12,13 +12,6 @@ class ConstantValueSource(SensorSourceBase):
         """
         self.value = value
 
-    def __iter__(self):
-        """
-        Implementation for iterator
-        :return: Self
-        """
-        return self
-
     def __next__(self):
         """
         Implementation for iterator

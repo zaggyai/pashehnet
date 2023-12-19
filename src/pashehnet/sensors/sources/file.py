@@ -16,13 +16,6 @@ class FileSource(SensorSourceBase):
         for line in open(uri):
             self.sample.put(dtype(line.strip()))
 
-    def __iter__(self):
-        """
-        Implementation for iterator
-        :return: Self
-        """
-        return self
-
     def __next__(self):
         """
         Implementation for iterator

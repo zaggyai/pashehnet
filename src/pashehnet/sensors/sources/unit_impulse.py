@@ -23,13 +23,6 @@ class UnitImpulseSource(SensorSourceBase):
         for x in unit_impulse(self.shape, self.idx, self.dtype):
             self.sample.put(x)
 
-    def __iter__(self):
-        """
-        Implementation for iterator
-        :return: Self
-        """
-        return self
-
     def __next__(self):
         """
         Implementation for iterator
