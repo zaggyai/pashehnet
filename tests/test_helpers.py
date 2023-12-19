@@ -19,5 +19,5 @@ def test_sources_from_csv():
         [1, 3],
         [2, 4]
     ]
-    samples = [[next(sources[c]) for c in sources.keys()] for _ in range(10)]
+    samples = [[next(sources[c]) for c in sources.keys()] for _ in range(len(expected))]
     assert expected == samples
