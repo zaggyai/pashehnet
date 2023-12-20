@@ -1,4 +1,7 @@
-from pashehnet.sensors.formats import CSVFormat
+from pashehnet.sensors.formats import (
+    CSVFormat,
+    JSONFormat,
+)
 
 
 class TestCSVFormat:
@@ -35,3 +38,18 @@ class TestCSVFormat:
             headers=True
         )
         assert 'a,b,value\n1,2,42' == fmt.transform(42)
+
+
+class TestJSONFormat:
+    """
+    Unit tests for JSONFormat class
+    """
+
+    def test_format(self):
+        tpl = {'sensor': 1, 'source': 'abc', 'data': {'value': None}}
+        pathspec = 'data.value'
+        fmt = JSONFormat(tpl, pathspec)
+
+        payload = fmt.transform('a')
+        expected = '{"sensor": 1, "source": "abc", "data": {"value": "a"}}'
+        assert expected == payload
