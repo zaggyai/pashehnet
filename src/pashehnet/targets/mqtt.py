@@ -1,3 +1,5 @@
+import uuid
+
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
 
@@ -12,30 +14,48 @@ class MQTTTarget(SensorTargetBase):
     MQTTv311 = mqtt.MQTTv311
     MQTTv5 = mqtt.MQTTv5
 
-    def __init__(self, hostname="localhost", port=1883, client_id="",
-                 protocol=MQTTv311, retain=False):
+    def __init__(self,
+                 hostname="localhost",
+                 port=1883,
+                 username=None,
+                 password=None,
+                 client_id=None,
+                 client_id_prefix=None,
+                 protocol=MQTTv311):
         """
         CTOR for MQTT publishing target
 
-        :param hostname: Hostname of MQTT server
-        :param port: Port on MQTT server
-        :param client_id: Client ID to use if required/desired
-        :param protocol: Which MQTT protocol to use
-        :param retain: Client state retention flag
+        :param hostname:
+        :param port:
+        :param username:
+        :param password:
+        :param client_id:
+        :param client_id_prefix:
+        :param protocol:
         """
         self.hostname = hostname
         self.port = port
+        self.username = username
+        self.password = password
         self.client_id = client_id
+        self.client_id_prefix = client_id_prefix
         self.protocol = protocol
-        self.retain = retain
+
+        self.auth = {'username': self.username, 'password': self.password} if (
+            self.username) else None
+
+        if not self.client_id:
+            if not self.client_id_prefix:
+                self.client_id_prefix = 'pashehnet'
+            self.client_id = f'{self.client_id_prefix}--{str(uuid.uuid4())}'
 
     def send(self, topic, payload):
         publish.single(
             topic=topic,
             payload=payload,
-            retain=self.retain,
             hostname=self.hostname,
             port=self.port,
+            auth=self.auth,
             client_id=self.client_id,
             protocol=self.protocol
         )

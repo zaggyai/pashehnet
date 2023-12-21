@@ -1,9 +1,11 @@
 import logging
 import os
 import sys
+from functools import cache
 
 import fire
 from envyaml import EnvYAML
+from schema import Schema, Optional, Use, And, SchemaError
 
 ########################################
 # Set up logging
@@ -21,6 +23,51 @@ logging.getLogger().setLevel(
 
 class ConfigurationError(Exception):
     pass
+
+
+class ConfigKeys:
+    VERSION = 'version'
+    TARGET = 'target'
+    RESOURCE = 'resource'
+    SPEC = 'spec'
+    SENSORS = 'sensors'
+    TOPIC = 'topic'
+    SOURCE = 'source'
+    FORMAT = 'format'
+    ID = 'id'
+
+@cache
+def config_schema():
+    """
+    Returns the minimal schema required to define a network; does NOT guarantee
+    that said network config will actually work as desired.
+    :return: Schema object, cached
+    """
+    return Schema({
+        'version': 1,
+        'target': {
+            'resource': str,
+            'spec': dict
+        },
+        'sensors': [{
+            'topic': str,
+            'id': str,
+            Optional('frequency'): int,
+            'source': {
+                'resource': str,
+                'spec': dict
+            },
+            'format': {
+                'resource': str,
+                'spec': dict
+            },
+            Optional('transforms'): [{
+                'resource': str,
+                'spec': dict
+            }]
+        }],
+        str: object  # Catchall as we don't care about extra cruft
+    })
 
 
 class Runner(object):
@@ -56,6 +103,9 @@ class Runner(object):
         logging.debug('Starting configuration check')
         try:
             config = self._load_config(self.config_file)  # noqa: F841
+            logging.debug(f'{ConfigKeys.VERSION}: {config[ConfigKeys.VERSION]}')
+            logging.debug(f'{ConfigKeys.TARGET}: {config[ConfigKeys.TARGET][ConfigKeys.RESOURCE]}')
+            logging.debug(f'{ConfigKeys.SENSORS}: {config[ConfigKeys.SENSORS]}')
         except Exception as e:
             logging.error(e)
 
@@ -68,23 +118,13 @@ class Runner(object):
         """
         logging.debug(f'Loading configuration file: {config_file}')
         try:
-            config = EnvYAML(config_file)
-            Runner._validate_config(config)
+            config = EnvYAML(config_file).export()
+            config_schema().validate(config)
             return config
+        except SchemaError as e:
+            raise ConfigurationError(str(e))
         except Exception as e:
             raise ConfigurationError(str(e))
-
-    @staticmethod
-    def _validate_config(config):
-        """
-        Validate the provided configuration
-        :param config: Loaded configuration
-        :return: None
-        """
-        logging.debug('Validating configuration')
-        assert Runner.CURRENT_CONFIG_VERSION == config['version'], \
-            f'Expected config version to be {Runner.CURRENT_CONFIG_VERSION}, got {config["version"]}'  # noqa: E501
-        # TODO Add additional validation of required config file flags
 
 
 def cli_main():
