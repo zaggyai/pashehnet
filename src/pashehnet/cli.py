@@ -5,7 +5,7 @@ from functools import cache
 
 import fire
 from envyaml import EnvYAML
-from schema import Schema, Optional, Use, And, SchemaError
+from schema import Schema, Optional, SchemaError
 
 ########################################
 # Set up logging
@@ -29,12 +29,15 @@ class ConfigKeys:
     VERSION = 'version'
     TARGET = 'target'
     RESOURCE = 'resource'
-    SPEC = 'spec'
     SENSORS = 'sensors'
     TOPIC = 'topic'
     SOURCE = 'source'
     FORMAT = 'format'
+    TRANSFORMS = 'transforms'
     ID = 'id'
+    SPEC = 'spec'
+    FREQUENCY = 'frequency'
+
 
 @cache
 def config_schema():
@@ -44,26 +47,26 @@ def config_schema():
     :return: Schema object, cached
     """
     return Schema({
-        'version': 1,
-        'target': {
-            'resource': str,
-            'spec': dict
+        ConfigKeys.VERSION: 1,
+        ConfigKeys.TARGET: {
+            ConfigKeys.RESOURCE: str,
+            ConfigKeys.SPEC: dict
         },
-        'sensors': [{
-            'topic': str,
-            'id': str,
-            Optional('frequency'): int,
-            'source': {
-                'resource': str,
-                'spec': dict
+        ConfigKeys.SENSORS: [{
+            ConfigKeys.TOPIC: str,
+            ConfigKeys.ID: str,
+            Optional(ConfigKeys.FREQUENCY): int,
+            ConfigKeys.SOURCE: {
+                ConfigKeys.RESOURCE: str,
+                ConfigKeys.SPEC: dict
             },
-            'format': {
-                'resource': str,
-                'spec': dict
+            ConfigKeys.FORMAT: {
+                ConfigKeys.RESOURCE: str,
+                ConfigKeys.SPEC: dict
             },
-            Optional('transforms'): [{
-                'resource': str,
-                'spec': dict
+            Optional(ConfigKeys.TRANSFORMS): [{
+                ConfigKeys.RESOURCE: str,
+                ConfigKeys.SPEC: dict
             }]
         }],
         str: object  # Catchall as we don't care about extra cruft
@@ -102,10 +105,16 @@ class Runner(object):
         """
         logging.debug('Starting configuration check')
         try:
-            config = self._load_config(self.config_file)  # noqa: F841
-            logging.debug(f'{ConfigKeys.VERSION}: {config[ConfigKeys.VERSION]}')
-            logging.debug(f'{ConfigKeys.TARGET}: {config[ConfigKeys.TARGET][ConfigKeys.RESOURCE]}')
-            logging.debug(f'{ConfigKeys.SENSORS}: {config[ConfigKeys.SENSORS]}')
+            config = self._load_config(self.config_file)
+            logging.debug(f'{ConfigKeys.VERSION}: '
+                          f'{config[ConfigKeys.VERSION]}'
+                          )
+            logging.debug(f'{ConfigKeys.TARGET}: '
+                          f'{config[ConfigKeys.TARGET][ConfigKeys.RESOURCE]}'
+                          )
+            logging.debug(f'{ConfigKeys.SENSORS}: '
+                          f'{config[ConfigKeys.SENSORS]}'
+                          )
         except Exception as e:
             logging.error(e)
 
