@@ -59,5 +59,6 @@ class MQTTTarget(SensorTargetBase):
             port=self.port,
             auth=self.auth,
             client_id=self.client_id,
-            protocol=self.protocol
+            protocol=self.protocol,
+            retain=False
         )

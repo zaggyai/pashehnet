@@ -22,6 +22,9 @@ TopicSensor = namedtuple('TopicSensor', ['topic', 'sensor'])
 
 
 class SensorProcess(Process):
+    """
+    Class that wraps a SensorNetwork sensor child process
+    """
     def __init__(self, target: SensorTargetBase, topic, sensor):
         super(SensorProcess, self).__init__()
         self.target = target
@@ -43,6 +46,10 @@ class SensorProcess(Process):
 
 
 class SensorNetwork(object):
+    """
+    Class that provides a network of simulated sensors, publishing to a single
+    target.
+    """
     def __init__(self, target):
         self.sensors = []
         self.sensor_procs = []
@@ -50,14 +57,23 @@ class SensorNetwork(object):
         self.running = False
 
     def add_sensor(self, topic, sensor):
+        """
+        Add a sensor publishing to a given topic
+        """
         if not self.running:
             self.sensors.append(TopicSensor(topic, sensor))
 
     def add_sensors(self, topic, sensors):
+        """
+        Add a collection of sensors publishing to the same topic
+        """
         for sensor in sensors:
             self.add_sensor(topic, sensor)
 
     def start(self):
+        """
+        Start the simulated sensor network
+        """
         try:
             for (topic, sensor) in self.sensors:
                 self.sensor_procs.append(SensorProcess(
@@ -82,6 +98,10 @@ class SensorNetwork(object):
             logging.error(str(e))
 
     def stop(self, signum=None, frame=None):
+        """
+        Stop the simulated sensor network; doubles as a signal handler for
+        SIGINT and SIGTERM
+        """
         try:
             for p in self.sensor_procs:
                 logging.debug(
