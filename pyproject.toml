@@ -24,6 +24,7 @@ dependencies = [
     "smart-open~=6.4",
     "pandas~=2.0",
     "jsonpath-ng~=1.6",
+    "schema~=0.7",
 ]
 
 [project.urls]
