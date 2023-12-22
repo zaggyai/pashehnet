@@ -84,7 +84,14 @@ class TestStuckTransform:
         )
         sample = [xform.transform(x) for x in [0] * 100]
         runs = self._runs_of_ones_list(sample)
-        assert min(runs) >= d_min and max(runs) <= d_max
+        # Check if there are any runs before applying the min and max checks
+        assert runs, "No runs of ones found in the sample"
+
+        # Check if the maximum run length is within the expected range
+        assert max(runs) <= d_max, f"Max run length {max(runs)} exceeds {d_max}"
+
+        # Check if the minimum run length is within the expected range
+        assert min(runs) >= d_min, f"Min run length {min(runs)} is less than {d_min}"
 
     @staticmethod
     def _runs_of_ones_list(bits):
@@ -95,4 +102,8 @@ class TestStuckTransform:
         :param bits List of 0/1 values to count run groups of 1s
         :return: List of counts for 1 value run groups in bits
         """
-        return [sum(g) for b, g in itertools.groupby(bits) if b]
+        run_lengths = [sum(g) for b, g in itertools.groupby(bits) if b]
+        # Ensure the first run starts from the beginning
+        if bits[0] == 1:
+            run_lengths = [0] + run_lengths
+        return run_lengths
