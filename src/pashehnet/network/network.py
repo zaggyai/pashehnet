@@ -1,47 +1,45 @@
 import logging
 import os
 import signal
-import sys
 from collections import namedtuple
 from multiprocessing import Process
 
-from pashehnet import Sensor
 from pashehnet.targets import SensorTargetBase
 
 ########################################
 # Set up logging
 ########################################
-logging.basicConfig(
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    handlers=[logging.StreamHandler(sys.stdout)]
-)
+logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s')
 logging.getLogger().setLevel(
     logging.getLevelName(
         os.getenv('LOG_LEVEL', 'WARN').upper()
     )
 )
 
+
+# Define namedtuples
 TopicSensor = namedtuple('TopicSensor', ['topic', 'sensor'])
 
 
 class SensorProcess(Process):
-    def __init__(self, target: SensorTargetBase, topic, sensor: Sensor):
+    def __init__(self, target: SensorTargetBase, topic, sensor):
         super(SensorProcess, self).__init__()
         self.target = target
         self.topic = topic
         self.sensor = sensor
-        self.kill_now = False
-
-        signal.signal(signal.SIGINT, self.exit_gracefully)
-        signal.signal(signal.SIGTERM, self.exit_gracefully)
-
-    def exit_gracefully(self, signum, frame):
-        self.kill_now = True
 
     def run(self):
-        while not self.kill_now:
-            payload = next(self.sensor)
-            self.target.send(self.topic, payload)
+        while True:
+            try:
+                payload = next(self.sensor)
+                logging.debug(
+                    f'Sensor {self.sensor.id} '
+                    f'sending payload {payload} '
+                    f'to {self.topic}')
+                self.target.send(self.topic, payload)
+            except Exception as e:
+                logging.error(f'Sensor {self.sensor.id}, exception: {str(e)}')
+                continue
 
 
 class SensorNetwork(object):
@@ -77,10 +75,13 @@ class SensorNetwork(object):
                 f'Started {len(self.sensor_procs)} sensor processes.'
             )
             self.running = True
+
+            signal.signal(signal.SIGINT, self.stop)
+            signal.signal(signal.SIGTERM, self.stop)
         except Exception as e:
             logging.error(str(e))
 
-    def stop(self):
+    def stop(self, signum=None, frame=None):
         try:
             for p in self.sensor_procs:
                 logging.debug(

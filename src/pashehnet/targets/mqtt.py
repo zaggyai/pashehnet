@@ -39,7 +39,9 @@ class MQTTTarget(SensorTargetBase):
         self.password = password
         self.client_id = client_id
         self.client_id_prefix = client_id_prefix
-        self.protocol = protocol
+        self.protocol = protocol if (
+                protocol in [self.MQTTv311, self.MQTTv31, self.MQTTv5]) else (
+            self.__getattribute__(protocol))
 
         self.auth = {'username': self.username, 'password': self.password} if (
             self.username) else None
