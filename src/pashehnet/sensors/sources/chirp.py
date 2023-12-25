@@ -40,13 +40,6 @@ class ChirpSource(SensorSourceBase):
         for x in chirp(t, f0, t1, f1, method, phi, vertex_zero):
             self.sample.put(x)
 
-    def __iter__(self):
-        """
-        Implementation for iterator
-        :return: Self
-        """
-        return self
-
     def __next__(self):
         """
         Implementation for iterator

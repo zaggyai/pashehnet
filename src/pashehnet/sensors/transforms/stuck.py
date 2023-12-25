@@ -13,7 +13,7 @@ class StuckTransform(SensorTransformBase):
       from uniform distro)
     """
 
-    def __init__(self, prob=0.01, value=0.0, duration=1, duration_range=None,
+    def __init__(self, prob=0.01, duration=1, duration_range=None,
                  rng=None):
         """
         CTOR for class
@@ -25,7 +25,7 @@ class StuckTransform(SensorTransformBase):
             numpy.random.default_rng
         """
         self.prob = prob
-        self.value = value
+        self.last_value = None
         self.duration = duration
         self.duration_range = duration_range
         self.rng = rng or np.random.default_rng()
@@ -49,5 +49,6 @@ class StuckTransform(SensorTransformBase):
 
         if self.rem_stuck > 0:
             self.rem_stuck -= 1
-            return self.value
+            return self.last_value
+        self.last_value = value
         return value

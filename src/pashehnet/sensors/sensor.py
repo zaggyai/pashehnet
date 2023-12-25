@@ -1,20 +1,28 @@
+import time
+
+
 class Sensor(object):
     """
     Generic wrapper class for source, transform(s) and formatting of sensor
     data
     """
 
-    def __init__(self, source, format, transforms=[]):
+    def __init__(self, id, source, format, transforms=[], frequency=1):
         """
         Construct new object
+        :param id: the unique ID of this sensor
         :param source: Source object, subclass of SensorSourceBase
         :param format: Format object, subclass of SensorFormatBase
         :param transforms: One or more transforms in order to be called,
             subclasses of SensorTransformBase
+        :param: freq: Frequency of signal in Hz
         """
+        self.id = id
         self.source = source
         self.format = format
         self.transforms = transforms
+        self.frequency = frequency
+        self.delay = 1.0 / self.frequency
 
     def __iter__(self):
         """
@@ -28,6 +36,8 @@ class Sensor(object):
         Implementation for iterator
         :return: Next value from sensor stream
         """
+        time.sleep(self.delay)
+
         # Get next value from source iterator
         value = next(self.source)
 

@@ -5,12 +5,14 @@ from scipy import signal
 from pashehnet.sensors.sources import (
     ConstantValueSource,
     SweepPolySource,
-    UnitImpulseSource, 
+    UnitImpulseSource,
     ChirpSource,
     SquareWaveSource,
     SawtoothWaveSource,
-    GaussianPulseSource
+    GaussianPulseSource,
+    FileSource,
 )
+from pashehnet.sensors.sources.series import SeriesSource
 
 
 class TestConstantValueSource:
@@ -36,7 +38,8 @@ class TestSquareWaveSource:
 
     def test_source(self):
         """
-        Test that expected square wave values are returned in iterative requests
+        Test that expected square wave values are returned in iterative
+        requests
         """
         # Test parameters
         frequency, sample_rate, duty_cycle = 5, 500, 0.5
@@ -49,7 +52,10 @@ class TestSquareWaveSource:
 
         # Generate expected values
         t = np.linspace(0, 1, sample_rate, endpoint=False)
-        expected_values = signal.square(2 * np.pi * frequency * t, duty=duty_cycle)
+        expected_values = signal.square(
+            2 * np.pi * frequency * t,
+            duty=duty_cycle
+        )
 
         # Compare generated values with expected values
         assert generated_values == approx(expected_values)
@@ -62,7 +68,8 @@ class TestSawtoothWaveSource:
 
     def test_source(self):
         """
-        Test that expected square wave values are returned in iterative requests
+        Test that expected square wave values are returned in iterative
+        requests
         """
         # Test parameters
         frequency, sample_rate, width = 5, 10, 0.5
@@ -75,12 +82,14 @@ class TestSawtoothWaveSource:
 
         # Generate expected values
         t = np.linspace(0, 1, sample_rate, endpoint=False)
-        expected_values = signal.sawtooth(2 * np.pi * frequency * t, width=width)
-        
+        expected_values = signal.sawtooth(
+            2 * np.pi * frequency * t,
+            width=width
+        )
 
         # Compare generated values with expected values
         assert generated_values == approx(expected_values)
-        
+
 
 class TestSweepPolySource:
     """
@@ -153,6 +162,37 @@ class TestUnitImpulseSource:
         assert cycle1 == cycle2
 
 
+class TestFileSource:
+    """
+    Unit tests for FileSource class
+    """
+    def test_local(self):
+        uri = 'tests/file_source.txt'
+        src = FileSource(uri)
+        expected = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 0.0]
+        sample = [next(src) for _ in range(len(expected))]
+        assert expected == approx(sample)
+
+    def test_remote(self):
+        uri = 'https://gist.githubusercontent.com/arpieb/2e0d262e4099f3c28f4befdfe0958a15/raw/e35f12955d1328998a226c550cf9a51867ce5197/gistfile1.txt'  # noqa E501
+        src = FileSource(uri)
+        expected = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 0.0]
+        sample = [next(src) for _ in range(len(expected))]
+        assert expected == approx(sample)
+
+
+class TestSeriesSource:
+    """
+    Unit tests for FileSource class
+    """
+    def test_source(self):
+        series = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+        src = SeriesSource(series)
+        expected = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 0.0]
+        sample = [next(src) for _ in range(len(expected))]
+        assert expected == approx(sample)
+
+
 class TestChirpSource:
     """
     Unit tests for ConstantValueSource class
@@ -194,9 +234,23 @@ class TestChirpSource:
 
     def test_vertex_zero(self):
         t = np.linspace(0, 10, 1500)
-        w = signal.chirp(t, f0=6, f1=1, t1=5, method='quadratic', vertex_zero=False)
+        w = signal.chirp(
+            t,
+            f0=6,
+            f1=1,
+            t1=5,
+            method='quadratic',
+            vertex_zero=False
+        )
 
-        src = ChirpSource(t, f0=6, f1=1, t1=5, method='quadratic', vertex_zero=False)
+        src = ChirpSource(
+            t,
+            f0=6,
+            f1=1,
+            t1=5,
+            method='quadratic',
+            vertex_zero=False
+        )
         sample = [next(src) for _ in range(len(t))]
 
         assert all(sample == w)

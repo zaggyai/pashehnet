@@ -21,6 +21,9 @@ dependencies = [
     "envyaml~=1.10",
     "fire~=0.5",
     "scipy~=1.10",
+    "smart-open~=6.4",
+    "pandas~=2.0",
+    "jsonpath-ng~=1.6",
 ]
 
 [project.urls]

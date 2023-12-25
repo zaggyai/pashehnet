@@ -6,3 +6,5 @@ from .sweep_poly import SweepPolySource  # noqa: F401
 from .unit_impulse import UnitImpulseSource  # noqa: F401
 from .chirp import ChirpSource  # noqa: F401
 from .gaussianpulse import GaussianPulseSource  # noqa: F401
+from .file import FileSource  # noqa: F401
+from .series import SeriesSource  # noqa: F401
