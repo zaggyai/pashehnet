@@ -1,7 +1,7 @@
 import logging
 import os
 import sys
-from functools import cache
+from functools import lru_cache
 
 import fire
 from envyaml import EnvYAML
@@ -51,7 +51,7 @@ class ConfigKeys:
     FREQUENCY = 'frequency'
 
 
-@cache
+@lru_cache
 def config_schema():
     """
     Returns the minimal schema required to define a network; does NOT guarantee
