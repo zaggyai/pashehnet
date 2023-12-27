@@ -1,5 +1,6 @@
+import uuid
+
 import paho.mqtt.client as mqtt
-import paho.mqtt.publish as publish
 
 from .base import SensorTargetBase
 
@@ -12,30 +13,76 @@ class MQTTTarget(SensorTargetBase):
     MQTTv311 = mqtt.MQTTv311
     MQTTv5 = mqtt.MQTTv5
 
-    def __init__(self, hostname="localhost", port=1883, client_id="",
-                 protocol=MQTTv311, retain=False):
+    def __init__(self,
+                 hostname="localhost",
+                 port=1883,
+                 username=None,
+                 password=None,
+                 client_id=None,
+                 client_id_prefix=None,
+                 protocol=MQTTv311):
         """
         CTOR for MQTT publishing target
 
-        :param hostname: Hostname of MQTT server
-        :param port: Port on MQTT server
-        :param client_id: Client ID to use if required/desired
-        :param protocol: Which MQTT protocol to use
-        :param retain: Client state retention flag
+        :param hostname:
+        :param port:
+        :param username:
+        :param password:
+        :param client_id:
+        :param client_id_prefix:
+        :param protocol:
         """
         self.hostname = hostname
         self.port = port
+        self.username = username
+        self.password = password
         self.client_id = client_id
-        self.protocol = protocol
-        self.retain = retain
+        self.client_id_prefix = client_id_prefix
+        self.protocol = protocol if (
+                protocol in [self.MQTTv311, self.MQTTv31, self.MQTTv5]) else (
+            self.__getattribute__(protocol))
+
+        if not self.client_id:
+            if not self.client_id_prefix:
+                self.client_id_prefix = 'pashehnet'
+            self.client_id = f'{self.client_id_prefix}--{str(uuid.uuid4())}'
+
+        # Client object; needs to be instantiated on worker proc/thread
+        self.client = None
 
     def send(self, topic, payload):
-        publish.single(
-            topic=topic,
-            payload=payload,
-            retain=self.retain,
-            hostname=self.hostname,
-            port=self.port,
+        """
+        Publish the payload to the topic
+
+        :param topic: Topic (channel) to publish to
+        :param payload: Payload (data) to publish
+        :return: None
+        """
+        if not self.client:
+            self._init_client()
+        self.client.publish(topic, payload)
+
+    def _init_client(self):
+        """
+        Internal method to initialize the MQTT client on the local
+        thread/process to get around MP issues with calling
+        paho.mqtt.publish.single()
+        :return:
+        """
+        client = mqtt.Client(
             client_id=self.client_id,
-            protocol=self.protocol
+            clean_session=True,
+            userdata=None,
+            protocol=self.protocol,
+            transport="tcp"
         )
+        client.username_pw_set(
+            self.username,
+            self.password
+        )
+        client.connect(
+            self.hostname,
+            self.port
+        )
+        client.loop_start()
+        self.client = client

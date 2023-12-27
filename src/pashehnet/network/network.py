@@ -1,50 +1,55 @@
 import logging
 import os
 import signal
-import sys
 from collections import namedtuple
 from multiprocessing import Process
 
-from pashehnet import Sensor
 from pashehnet.targets import SensorTargetBase
 
 ########################################
 # Set up logging
 ########################################
-logging.basicConfig(
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    handlers=[logging.StreamHandler(sys.stdout)]
-)
+logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s')
 logging.getLogger().setLevel(
     logging.getLevelName(
         os.getenv('LOG_LEVEL', 'WARN').upper()
     )
 )
 
+
+# Define namedtuples
 TopicSensor = namedtuple('TopicSensor', ['topic', 'sensor'])
 
 
 class SensorProcess(Process):
-    def __init__(self, target: SensorTargetBase, topic, sensor: Sensor):
+    """
+    Class that wraps a SensorNetwork sensor child process
+    """
+    def __init__(self, target: SensorTargetBase, topic, sensor):
         super(SensorProcess, self).__init__()
         self.target = target
         self.topic = topic
         self.sensor = sensor
-        self.kill_now = False
-
-        signal.signal(signal.SIGINT, self.exit_gracefully)
-        signal.signal(signal.SIGTERM, self.exit_gracefully)
-
-    def exit_gracefully(self, signum, frame):
-        self.kill_now = True
 
     def run(self):
-        while not self.kill_now:
-            payload = next(self.sensor)
-            self.target.send(self.topic, payload)
+        while True:
+            try:
+                payload = next(self.sensor)
+                logging.debug(
+                    f'Sensor {self.sensor.id} '
+                    f'sending payload {payload} '
+                    f'to {self.topic}')
+                self.target.send(self.topic, payload)
+            except Exception as e:
+                logging.error(f'Sensor {self.sensor.id}, exception: {str(e)}')
+                continue
 
 
 class SensorNetwork(object):
+    """
+    Class that provides a network of simulated sensors, publishing to a single
+    target.
+    """
     def __init__(self, target):
         self.sensors = []
         self.sensor_procs = []
@@ -52,14 +57,23 @@ class SensorNetwork(object):
         self.running = False
 
     def add_sensor(self, topic, sensor):
+        """
+        Add a sensor publishing to a given topic
+        """
         if not self.running:
             self.sensors.append(TopicSensor(topic, sensor))
 
     def add_sensors(self, topic, sensors):
+        """
+        Add a collection of sensors publishing to the same topic
+        """
         for sensor in sensors:
             self.add_sensor(topic, sensor)
 
     def start(self):
+        """
+        Start the simulated sensor network
+        """
         try:
             for (topic, sensor) in self.sensors:
                 self.sensor_procs.append(SensorProcess(
@@ -77,10 +91,17 @@ class SensorNetwork(object):
                 f'Started {len(self.sensor_procs)} sensor processes.'
             )
             self.running = True
+
+            signal.signal(signal.SIGINT, self.stop)
+            signal.signal(signal.SIGTERM, self.stop)
         except Exception as e:
             logging.error(str(e))
 
-    def stop(self):
+    def stop(self, signum=None, frame=None):
+        """
+        Stop the simulated sensor network; doubles as a signal handler for
+        SIGINT and SIGTERM
+        """
         try:
             for p in self.sensor_procs:
                 logging.debug(
