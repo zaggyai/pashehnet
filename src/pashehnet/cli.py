@@ -163,7 +163,7 @@ class Runner(object):
         """
         cls = target_cfg[ConfigKeys.RESOURCE]
         kwargs = target_cfg.get(ConfigKeys.SPEC, {})
-        return vars(pashehnet.targets)[cls](**kwargs)
+        return self._instantiate_obj(pashehnet.targets, cls, kwargs)
 
     def _sensors_from_config(self, network, sensors_cfg):
         """
