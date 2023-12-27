@@ -2,19 +2,18 @@ import logging
 import os
 import sys
 from functools import lru_cache
+from importlib import import_module
 
 import fire
 from envyaml import EnvYAML
 from schema import Schema, Optional, SchemaError, Or
 
-from pashehnet.network import SensorNetwork
-
-import pashehnet.targets
-import pashehnet.sensors.sources
 import pashehnet.sensors.formats
+import pashehnet.sensors.sources
 import pashehnet.sensors.transforms
+import pashehnet.targets
+from pashehnet.network import SensorNetwork
 from pashehnet.sensors import Sensor
-
 
 ########################################
 # Set up logging
@@ -194,7 +193,7 @@ class Runner(object):
         """
         cls = source_cfg[ConfigKeys.RESOURCE]
         kwargs = source_cfg.get(ConfigKeys.SPEC, {})
-        return vars(pashehnet.sensors.sources)[cls](**kwargs)
+        return self._instantiate_obj(pashehnet.sensors.sources, cls, kwargs)
 
     def _format_from_config(self, format_cfg):
         """
@@ -204,7 +203,7 @@ class Runner(object):
         """
         cls = format_cfg[ConfigKeys.RESOURCE]
         kwargs = format_cfg.get(ConfigKeys.SPEC, {})
-        return vars(pashehnet.sensors.formats)[cls](**kwargs)
+        return self._instantiate_obj(pashehnet.sensors.formats, cls, kwargs)
 
     def _transform_from_config(self, xform_config):
         """
@@ -214,7 +213,33 @@ class Runner(object):
         """
         cls = xform_config[ConfigKeys.RESOURCE]
         kwargs = xform_config.get(ConfigKeys.SPEC, {})
-        return vars(pashehnet.sensors.transforms)[cls](**kwargs)
+        return self._instantiate_obj(pashehnet.sensors.transforms, cls, kwargs)
+
+    def _instantiate_obj(self, core_pkg, cls, kwargs):
+        """
+        Util method to wrap common dynamic module load/instantiation logic
+
+        :param core_pkg:
+        :param cls:
+        :param kwargs:
+        :return:
+        """
+        try:
+            # Try happy path where it's a core class
+            obj = vars(core_pkg)[cls](**kwargs)
+            return obj
+        except:  # noqa: E722
+            logging.debug(
+                f'{cls} not found in core packages, '
+                f'checking for external module'
+            )
+
+        # Now try the less happy path, see if it's a custom module
+        parts = cls.split('.')
+        pkg = '.'.join(parts[:-1])
+        cls = parts[-1]
+        m = import_module(pkg)
+        return vars(m)[cls](**kwargs)
 
 
 def cli_main():
