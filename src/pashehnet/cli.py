@@ -5,7 +5,7 @@ from functools import cache
 
 import fire
 from envyaml import EnvYAML
-from schema import Schema, Optional, SchemaError
+from schema import Schema, Optional, SchemaError, Or
 
 from pashehnet.network import SensorNetwork
 
@@ -68,7 +68,7 @@ def config_schema():
         ConfigKeys.SENSORS: [{
             ConfigKeys.TOPIC: str,
             ConfigKeys.ID: str,
-            Optional(ConfigKeys.FREQUENCY): int,
+            Optional(ConfigKeys.FREQUENCY): Or(int, float),
             ConfigKeys.SOURCE: {
                 ConfigKeys.RESOURCE: str,
                 Optional(ConfigKeys.SPEC): dict

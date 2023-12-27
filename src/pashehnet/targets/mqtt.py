@@ -1,7 +1,6 @@
 import uuid
 
 import paho.mqtt.client as mqtt
-import paho.mqtt.publish as publish
 
 from .base import SensorTargetBase
 
@@ -43,22 +42,47 @@ class MQTTTarget(SensorTargetBase):
                 protocol in [self.MQTTv311, self.MQTTv31, self.MQTTv5]) else (
             self.__getattribute__(protocol))
 
-        self.auth = {'username': self.username, 'password': self.password} if (
-            self.username) else None
-
         if not self.client_id:
             if not self.client_id_prefix:
                 self.client_id_prefix = 'pashehnet'
             self.client_id = f'{self.client_id_prefix}--{str(uuid.uuid4())}'
 
+        # Client object; needs to be instantiated on worker proc/thread
+        self.client = None
+
     def send(self, topic, payload):
-        publish.single(
-            topic=topic,
-            payload=payload,
-            hostname=self.hostname,
-            port=self.port,
-            auth=self.auth,
+        """
+        Publish the payload to the topic
+
+        :param topic: Topic (channel) to publish to
+        :param payload: Payload (data) to publish
+        :return: None
+        """
+        if not self.client:
+            self._init_client()
+        self.client.publish(topic, payload)
+
+    def _init_client(self):
+        """
+        Internal method to initialize the MQTT client on the local
+        thread/process to get around MP issues with calling
+        paho.mqtt.publish.single()
+        :return:
+        """
+        client = mqtt.Client(
             client_id=self.client_id,
+            clean_session=True,
+            userdata=None,
             protocol=self.protocol,
-            retain=False
+            transport="tcp"
         )
+        client.username_pw_set(
+            self.username,
+            self.password
+        )
+        client.connect(
+            self.hostname,
+            self.port
+        )
+        client.loop_start()
+        self.client = client
