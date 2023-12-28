@@ -12,15 +12,22 @@ class FileSource(SensorSourceBase):
         :param uri: Local filesystem or URI to open file from
         :param dtype: Data type to cast read values from
         """
-        self.sample = SimpleQueue()
-        for line in open(uri):
-            self.sample.put(dtype(line.strip()))
+        self.uri = uri
+        self.dtype = dtype
+        self.sample = None
 
     def __next__(self):
         """
         Implementation for iterator
         :return: Next value from source
         """
+        if not self.sample:
+            self._init_sample()
         val = self.sample.get()
         self.sample.put(val)
         return val
+
+    def _init_sample(self):
+        self.sample = SimpleQueue()
+        for line in open(self.uri):
+            self.sample.put(self.dtype(line.strip()))

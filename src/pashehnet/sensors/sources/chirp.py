@@ -33,18 +33,30 @@ class ChirpSource(SensorSourceBase):
         self.f1 = f1
         self.method = method
         self.phi = phi
-        self.vertez_zero = vertex_zero
-
-        # Leverage Python core FIFO queue for infinite cycle sample
-        self.sample = SimpleQueue()
-        for x in chirp(t, f0, t1, f1, method, phi, vertex_zero):
-            self.sample.put(x)
+        self.vertex_zero = vertex_zero
+        self.sample = None
 
     def __next__(self):
         """
         Implementation for iterator
         :return: Next value from source
         """
+        if not self.sample:
+            self._init_sample()
         val = self.sample.get()
         self.sample.put(val)
         return val
+
+    def _init_sample(self):
+        # Leverage Python core FIFO queue for infinite cycle sample
+        self.sample = SimpleQueue()
+        for x in chirp(
+                self.t,
+                self.f0,
+                self.t1,
+                self.f1,
+                self.method,
+                self.phi,
+                self.vertex_zero
+        ):
+            self.sample.put(x)
