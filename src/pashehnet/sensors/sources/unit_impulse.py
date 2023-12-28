@@ -17,17 +17,21 @@ class UnitImpulseSource(SensorSourceBase):
         self.shape = shape
         self.idx = idx
         self.dtype = dtype
-
-        # Leverage Python core FIFO queue for infinite cycle sample
-        self.sample = SimpleQueue()
-        for x in unit_impulse(self.shape, self.idx, self.dtype):
-            self.sample.put(x)
+        self.sample = None
 
     def __next__(self):
         """
         Implementation for iterator
         :return: Next value from source
         """
+        if not self.sample:
+            self._init_sample()
         val = self.sample.get()
         self.sample.put(val)
         return val
+
+    def _init_sample(self):
+        # Leverage Python core FIFO queue for infinite cycle sample
+        self.sample = SimpleQueue()
+        for x in unit_impulse(self.shape, self.idx, self.dtype):
+            self.sample.put(x)

@@ -22,17 +22,25 @@ class SweepPolySource(SensorSourceBase):
         self.t = t
         self.poly = poly
         self.phi = phi
-
-        # Leverage Python core FIFO queue for infinite cycle sample
-        self.sample = SimpleQueue()
-        for x in sweep_poly(t, poly, phi):
-            self.sample.put(x)
+        self.sample = None
 
     def __next__(self):
         """
         Implementation for iterator
         :return: Next value from source
         """
+        if not self.sample:
+            self._init_sample()
         val = self.sample.get()
         self.sample.put(val)
         return val
+
+    def _init_sample(self):
+        # Leverage Python core FIFO queue for infinite cycle sample
+        self.sample = SimpleQueue()
+        for x in sweep_poly(
+                self.t,
+                self.poly,
+                self.phi
+        ):
+            self.sample.put(x)

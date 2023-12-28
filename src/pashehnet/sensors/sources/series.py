@@ -13,15 +13,21 @@ class SeriesSource(SensorSourceBase):
         Constructor for series source
         :param series: List of values to loop over
         """
-        self.sample = SimpleQueue()
-        for val in series:
-            self.sample.put(val)
+        self.sample = None
+        self.series = series
 
     def __next__(self):
         """
         Implementation for iterator
         :return: Next value from source
         """
+        if not self.sample:
+            self._init_sample()
         val = self.sample.get()
         self.sample.put(val)
         return val
+
+    def _init_sample(self):
+        self.sample = SimpleQueue()
+        for x in self.series:
+            self.sample.put(x)
