@@ -107,13 +107,13 @@ class Runner(object):
         logging.debug('Starting runner')
         try:
             config = self._load_config(self.config_file)  # noqa: F841
-            logging.debug('Creating target from spec')
+            logging.info('Creating target from spec')
             target = self._target_from_config(config[ConfigKeys.TARGET])
-            logging.debug('Creating sensor network')
+            logging.info('Creating sensor network')
             network = SensorNetwork(target)
-            logging.debug('Adding sensors...')
+            logging.info('Adding sensors...')
             self._sensors_from_config(network, config[ConfigKeys.SENSORS])
-            logging.debug('Network populated, starting up')
+            logging.info('Network populated, starting up')
             network.start()
         except Exception as e:
             logging.error(e)
