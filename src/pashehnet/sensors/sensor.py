@@ -22,7 +22,9 @@ class Sensor(object):
         self.format = format
         self.transforms = transforms
         self.frequency = frequency
-        self.delay = 1.0 / self.frequency
+        self.delay = 1.0 / frequency if \
+            (frequency and frequency > 0.0) else \
+            None
 
     def __iter__(self):
         """
@@ -36,7 +38,8 @@ class Sensor(object):
         Implementation for iterator
         :return: Next value from sensor stream
         """
-        time.sleep(self.delay)
+        if self.delay:
+            time.sleep(self.delay)
 
         # Get next value from source iterator
         value = next(self.source)
