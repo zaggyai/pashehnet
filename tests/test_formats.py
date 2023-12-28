@@ -2,6 +2,7 @@ from pashehnet.sensors.formats import (
     CSVFormat,
     JSONFormat,
     SimpleFormat,
+    StringFormat,
 )
 
 
@@ -54,6 +55,24 @@ class TestJSONFormat:
         payload = fmt.transform('a')
         expected = '{"sensor": 1, "source": "abc", "data": {"value": "a"}}'
         assert expected == payload
+
+
+class TestStringFormat:
+    """
+    Unit tests for StringFormat
+    """
+
+    def test_format(self):
+        tpl = 'value: {x}'
+        fmt = StringFormat(tpl, value_field='x')
+        values = [
+            1,
+            1.1,
+            'a'
+        ]
+        for value in values:
+            payload = fmt.transform(value)
+            assert payload == tpl.format(x=value)
 
 
 class TestSimpleFormat:
