@@ -7,7 +7,7 @@ variety of networks and tailor the simulation to your needs.
 Sources
 -------
 
-These modules provide the source data for teh simulated sensors.  Based on a
+These modules provide the source data for the simulated sensors.  Based on a
 simple iterator model, they are initialized and then do nothing but return the
 next value available in a steady stream.
 
