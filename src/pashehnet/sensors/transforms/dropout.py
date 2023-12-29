@@ -13,7 +13,6 @@ class DropoutTransform(SensorTransformBase):
       - Time (constant or min/max variable from uniform distro)
       - Sequence count (constant or min/max variable from uniform distro)
     """
-
     def __init__(self, prob=0.01, value=0.0, duration=1, duration_range=None,
                  rng=None):
         """

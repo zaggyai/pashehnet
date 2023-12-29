@@ -12,7 +12,6 @@ class StuckTransform(SensorTransformBase):
     - Duration of sensor being "stuck", count (constant or min/max variable
       from uniform distro)
     """
-
     def __init__(self, prob=0.01, duration=1, duration_range=None,
                  rng=None):
         """

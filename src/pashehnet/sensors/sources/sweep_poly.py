@@ -11,7 +11,6 @@ class SweepPolySource(SensorSourceBase):
     See:
     https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.sweep_poly.html
     """
-
     def __init__(self, t, poly, phi=0):
         """
         Construct new object

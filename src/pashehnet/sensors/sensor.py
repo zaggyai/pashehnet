@@ -4,9 +4,9 @@ import time
 class Sensor(object):
     """
     Generic wrapper class for source, transform(s) and formatting of sensor
-    data
+    data implemented as an iterator over the source, applying transforms, and
+    finally applying the formatter.
     """
-
     def __init__(self, id, source, format, transforms=[], frequency=1):
         """
         Construct new object

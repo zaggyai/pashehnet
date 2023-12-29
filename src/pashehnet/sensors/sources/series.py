@@ -5,9 +5,8 @@ from .base import SensorSourceBase
 
 class SeriesSource(SensorSourceBase):
     """
-    Class to provide a sensor source data from a list
+    Class to provide a sensor data source from a list
     """
-
     def __init__(self, series):
         """
         Constructor for series source

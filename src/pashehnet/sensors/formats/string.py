@@ -18,7 +18,7 @@ class StringFormat(SensorFormatBase):
         """
         Transform the value into formatted payload
         :param value: Value to transform
-        :return: Formatted payload
+        :return: Formatted string payload
         """
         kwargs = {
             self.value_field: value

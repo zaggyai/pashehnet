@@ -12,7 +12,6 @@ class UnitImpulseSource(SensorSourceBase):
     See:
     https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.unit_impulse.html
     """
-
     def __init__(self, shape, idx=None, dtype=np.float64):
         self.shape = shape
         self.idx = idx

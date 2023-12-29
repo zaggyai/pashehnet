@@ -2,12 +2,21 @@ from .base import SensorFormatBase
 
 
 class CSVFormat(SensorFormatBase):
+    """
+    CSV formatter class for sensor data.  Given a value, format into CSV based
+    on the provided template specs.
+    """
     def __init__(self, prefix_fields=None, value_field='value', headers=True):
         self.prefix_fields = prefix_fields or {}
         self.value_field = value_field
         self.headers = headers
 
     def transform(self, value):
+        """
+        Apply the CSV formatting to the given value
+        :param value: Value to transform.
+        :return: CSV formatted string
+        """
         lines = []
         keys = self.prefix_fields.keys()
         values = self.prefix_fields.values()

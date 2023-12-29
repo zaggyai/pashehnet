@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class SensorSourceBase(ABC):
     """
     Abstract base class for all sensor sources;
-    atm a thin wrapper for an iterator
+    atm a thin wrapper for an iterator.
     """
     def __iter__(self):
         """
