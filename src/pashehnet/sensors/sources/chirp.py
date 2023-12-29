@@ -15,16 +15,17 @@ class ChirpSource(SensorSourceBase):
                  vertex_zero=True):
         """
         CTOR
+
         :param t: array_like; Times at which to evaluate the waveform
         :param f0: float; Frequency (e.g. Hz) at time t=0
         :param t1: float; Time at which f1 is specified
         :param f1: float; Frequency (e.g. Hz) of the waveform at time t1
-        :param method: {‘linear’, ‘quadratic’, ‘logarithmic’, ‘hyperbolic’},
-        optional.  Kind of frequency sweep. If not given, linear is
+        :param method: {‘linear’, ‘quadratic’, ‘logarithmic’, ‘hyperbolic’}, \
+        optional.  Kind of frequency sweep. If not given, linear is \
         assumed. See scipy.signal.chirp notes for more details.
         :param phi: float, optional; Phase offset, in degrees. Default is 0
-        :param vertex_zero: bool, optional; This parameter is only used when
-        method is ‘quadratic’. It determines whether the vertex of the
+        :param vertex_zero: bool, optional; This parameter is only used when \
+        method is ‘quadratic’. It determines whether the vertex of the \
         parabola that is the graph of the frequency is at t=0 or t=t1
         """
         self.t = t
@@ -39,6 +40,7 @@ class ChirpSource(SensorSourceBase):
     def __next__(self):
         """
         Implementation for iterator
+
         :return: Next value from source
         """
         if not self.sample:

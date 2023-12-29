@@ -1,7 +1,7 @@
 # Welcome to PashehNet's documentation!
 
 ```{toctree}
-:maxdepth: 2
+:maxdepth: 4
 
 apidocs/index
 ```

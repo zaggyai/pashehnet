@@ -17,6 +17,7 @@ class JSONFormat(SensorFormatBase):
     def __init__(self, tpl, value_path):
         """
         Constructor for class
+
         :param tpl: Template dict for JSON data
         :param value_path: JSONPath selector for value location
         """
@@ -27,6 +28,7 @@ class JSONFormat(SensorFormatBase):
     def transform(self, value):
         """
         Apply formatter transform to value
+
         :param value: Value to inject into JSON template
         :return: JSON string
         """

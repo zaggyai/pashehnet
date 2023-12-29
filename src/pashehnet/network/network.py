@@ -59,6 +59,9 @@ class SensorNetwork(object):
     def add_sensor(self, topic, sensor):
         """
         Add a sensor publishing to a given topic
+
+        :param topic: Topic/channel to publish to
+        :param sensor: Sensor to read from and publish to topic
         """
         if not self.running:
             self.sensors.append(TopicSensor(topic, sensor))
@@ -66,6 +69,9 @@ class SensorNetwork(object):
     def add_sensors(self, topic, sensors):
         """
         Add a collection of sensors publishing to the same topic
+
+        :param topic: Topic/channel to publish to
+        :param sensor: Sensors to read from and publish to topic
         """
         for sensor in sensors:
             self.add_sensor(topic, sensor)

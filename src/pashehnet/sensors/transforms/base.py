@@ -7,4 +7,10 @@ class SensorTransformBase(ABC):
     """
     @abstractmethod
     def transform(self, value):
+        """
+        Pue abstract method to apply transform to sensor datum
+
+        :param value: Value to transform
+        :return: Transformed value
+        """
         ...

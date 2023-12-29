@@ -16,11 +16,12 @@ class StuckTransform(SensorTransformBase):
                  rng=None):
         """
         CTOR for class
+
         :param prob: Probability of dropout [0.0, 1.0]
         :param value: Value to use when dropout of signal occurs
         :param duration: Sample count in dropout
         :param duration_range: Tuple of min/max dropout counts
-        :param rng: NumPy random number generator to use; defaults to
+        :param rng: NumPy random number generator to use; defaults to \
         numpy.random.default_rng
         """
         self.prob = prob
@@ -34,6 +35,7 @@ class StuckTransform(SensorTransformBase):
         """
         Apply transform, calculating if a stuck sensor is occurring and
         returning appropriate value
+
         :param value:
         :return:
         """

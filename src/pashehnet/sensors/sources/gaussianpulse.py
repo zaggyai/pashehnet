@@ -12,18 +12,19 @@ class GaussianPulseSource(SensorSourceBase):
                  ret_quad=False, ret_env=False):
         """
         Construct a new GaussianPulseSource object
-        :param center_frequency: Center frequency of the Gaussian pulse in Hz
+
+        :param center_frequency: Center frequency of the Gaussian pulse in Hz \
         (default is 1000)
-        :param fractional_bandwidth: Fractional bandwidth in frequency domain
+        :param fractional_bandwidth: Fractional bandwidth in frequency domain \
         of pulse (default is 0.5)
-        :param reference_level: Reference level at which fractional bandwidth
+        :param reference_level: Reference level at which fractional bandwidth \
         is calculated (dB) (default is -6)
-        :param cutoff_time: Cutoff time for when the pulse amplitude falls
+        :param cutoff_time: Cutoff time for when the pulse amplitude falls \
         below the specified level (in dB) (default is -60)
         :param sample_rate: Sampling rate in Hz (default is 1000)
-        :param ret_quad: If True, return the quadrature (imaginary) part of the
-        signal (default is False)
-        :param ret_env: If True, return the envelope of the signal
+        :param ret_quad: If True, return the quadrature (imaginary) part of  \
+        the signal (default is False)
+        :param ret_env: If True, return the envelope of the signal \
         (default is False)
         """
         self.center_frequency = center_frequency
@@ -38,6 +39,7 @@ class GaussianPulseSource(SensorSourceBase):
     def __next__(self):
         """
         Implementation for iterator
+
         :return: Next value from the Gaussian pulse source
         """
         t = np.linspace(self.time, self.time + 1/self.sample_rate, 2,

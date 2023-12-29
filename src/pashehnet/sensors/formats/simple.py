@@ -8,6 +8,7 @@ class SimpleFormat(SensorFormatBase):
     def transform(self, value):
         """
         Format the value using ths builtin str()
+
         :param value: Value to format
         :return: Stringified value
         """

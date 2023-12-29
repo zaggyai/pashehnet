@@ -7,6 +7,14 @@ class CSVFormat(SensorFormatBase):
     on the provided template specs.
     """
     def __init__(self, prefix_fields=None, value_field='value', headers=True):
+        """
+        CTOR for class
+
+        :param prefix_fields: Dict of prefix fields+values to include \
+        in CSV output
+        :param value_field: Name of field where the value will be emitted
+        :param headers: Toggle whether headers are generated during formatting
+        """
         self.prefix_fields = prefix_fields or {}
         self.value_field = value_field
         self.headers = headers
@@ -14,6 +22,7 @@ class CSVFormat(SensorFormatBase):
     def transform(self, value):
         """
         Apply the CSV formatting to the given value
+
         :param value: Value to transform.
         :return: CSV formatted string
         """

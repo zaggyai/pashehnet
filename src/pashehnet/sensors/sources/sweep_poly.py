@@ -14,6 +14,7 @@ class SweepPolySource(SensorSourceBase):
     def __init__(self, t, poly, phi=0):
         """
         Construct new object
+
         :param t: ndarray; times at which to evaluate the waveform
         :param poly: 1-D array_like or instance of numpy.poly1d
         :param phi: float, optional;  Phase offset, in degrees, Default: 0
@@ -26,6 +27,7 @@ class SweepPolySource(SensorSourceBase):
     def __next__(self):
         """
         Implementation for iterator
+
         :return: Next value from source
         """
         if not self.sample:

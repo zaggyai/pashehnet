@@ -7,4 +7,10 @@ class SensorFormatBase(ABC):
     """
     @abstractmethod
     def transform(self, value):
+        """
+        Abstract method to apply formatter to given value
+
+        :param value: Value to format
+        :return: Formatted value
+        """
         ...
