@@ -121,8 +121,9 @@ class Runner(object):
             network = SensorNetwork(target)
             logging.info('Adding sensors...')
             self._sensors_from_config(network, config[ConfigKeys.SENSORS])
-            logging.info('Network populated, starting up')
+            logging.info('Network populated, starting up...')
             network.start()
+            logging.info('Network running')
         except Exception as e:
             logging.error(e)
 
