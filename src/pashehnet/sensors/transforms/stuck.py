@@ -22,7 +22,7 @@ class StuckTransform(SensorTransformBase):
         :param duration: Sample count in dropout
         :param duration_range: Tuple of min/max dropout counts
         :param rng: NumPy random number generator to use; defaults to
-            numpy.random.default_rng
+        numpy.random.default_rng
         """
         self.prob = prob
         self.last_value = None

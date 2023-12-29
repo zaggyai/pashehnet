@@ -14,7 +14,7 @@ class Sensor(object):
         :param source: Source object, subclass of SensorSourceBase
         :param format: Format object, subclass of SensorFormatBase
         :param transforms: One or more transforms in order to be called,
-            subclasses of SensorTransformBase
+        subclasses of SensorTransformBase
         :param: freq: Frequency of signal in Hz
         """
         self.id = id

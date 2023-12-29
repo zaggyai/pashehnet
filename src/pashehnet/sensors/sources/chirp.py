@@ -20,12 +20,12 @@ class ChirpSource(SensorSourceBase):
         :param t1: float; Time at which f1 is specified
         :param f1: float; Frequency (e.g. Hz) of the waveform at time t1
         :param method: {‘linear’, ‘quadratic’, ‘logarithmic’, ‘hyperbolic’},
-            optional.  Kind of frequency sweep. If not given, linear is
-            assumed. See scipy.signal.chirp notes for more details.
+        optional.  Kind of frequency sweep. If not given, linear is
+        assumed. See scipy.signal.chirp notes for more details.
         :param phi: float, optional; Phase offset, in degrees. Default is 0
         :param vertex_zero: bool, optional; This parameter is only used when
-            method is ‘quadratic’. It determines whether the vertex of the
-            parabola that is the graph of the frequency is at t=0 or t=t1
+        method is ‘quadratic’. It determines whether the vertex of the
+        parabola that is the graph of the frequency is at t=0 or t=t1
         """
         self.t = t
         self.f0 = f0

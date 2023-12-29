@@ -13,7 +13,7 @@ class SawtoothWaveSource(SensorSourceBase):
         :param frequency: Frequency of the sawtooth wave in Hz
         :param sample_rate: Sampling rate in Hz
         :param width: Width of the rising ramp as a proportion of the total
-            cycle (default is 1.0)
+        cycle (default is 1.0)
         """
         self.frequency = frequency
         self.sample_rate = sample_rate

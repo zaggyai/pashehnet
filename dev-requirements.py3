@@ -4,4 +4,3 @@ build
 python-dotenv
 matplotlib
 smart_open[http]
-sphinx
