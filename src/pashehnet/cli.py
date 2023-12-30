@@ -1,3 +1,8 @@
+"""
+This module provides the command line interface via `pashehnet` that allows a
+user to launch a simulated sensor network via a provided YAML configuration
+file.
+"""
 import logging
 import os
 import sys
@@ -30,6 +35,9 @@ logging.getLogger().setLevel(
 
 
 class ConfigurationError(Exception):
+    """
+    Custom exception raised when a configuration file error is encountered.
+    """
     pass
 
 
@@ -113,8 +121,9 @@ class Runner(object):
             network = SensorNetwork(target)
             logging.info('Adding sensors...')
             self._sensors_from_config(network, config[ConfigKeys.SENSORS])
-            logging.info('Network populated, starting up')
+            logging.info('Network populated, starting up...')
             network.start()
+            logging.info('Network running')
         except Exception as e:
             logging.error(e)
 
@@ -243,6 +252,10 @@ class Runner(object):
 
 
 def cli_main():
+    """
+    Main entrypoint for command line interface invoked with `pashehnet`
+    :return: None
+    """
     fire.Fire(Runner)
 
 

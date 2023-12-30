@@ -1,0 +1,7 @@
+sphinx
+sphinx-design
+myst-parser
+sphinx-copybutton
+sphinx-notfound-page
+sphinx-autodoc2
+sphinxawesome-theme

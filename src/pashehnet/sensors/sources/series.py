@@ -5,12 +5,12 @@ from .base import SensorSourceBase
 
 class SeriesSource(SensorSourceBase):
     """
-    Class to provide a sensor source data from a list
+    Class to provide a sensor data source from a list
     """
-
     def __init__(self, series):
         """
         Constructor for series source
+
         :param series: List of values to loop over
         """
         self.sample = None
@@ -19,6 +19,7 @@ class SeriesSource(SensorSourceBase):
     def __next__(self):
         """
         Implementation for iterator
+
         :return: Next value from source
         """
         if not self.sample:

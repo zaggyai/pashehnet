@@ -24,13 +24,13 @@ class MQTTTarget(SensorTargetBase):
         """
         CTOR for MQTT publishing target
 
-        :param hostname:
-        :param port:
-        :param username:
-        :param password:
-        :param client_id:
-        :param client_id_prefix:
-        :param protocol:
+        :param hostname: MQTT broker hostname
+        :param port: MQTT broker port
+        :param username: MQTT broker username
+        :param password: MQTT broker password
+        :param client_id: MQTT client ID
+        :param client_id_prefix: MQTT client prefix
+        :param protocol: MQTT protocol version (MQTTv31 | MQTTv311 | MQTTv5)
         """
         self.hostname = hostname
         self.port = port
@@ -67,7 +67,7 @@ class MQTTTarget(SensorTargetBase):
         Internal method to initialize the MQTT client on the local
         thread/process to get around MP issues with calling
         paho.mqtt.publish.single()
-        :return:
+        :return: None
         """
         client = mqtt.Client(
             client_id=self.client_id,

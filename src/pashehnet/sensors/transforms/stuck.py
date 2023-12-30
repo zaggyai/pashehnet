@@ -12,17 +12,17 @@ class StuckTransform(SensorTransformBase):
     - Duration of sensor being "stuck", count (constant or min/max variable
       from uniform distro)
     """
-
     def __init__(self, prob=0.01, duration=1, duration_range=None,
                  rng=None):
         """
         CTOR for class
+
         :param prob: Probability of dropout [0.0, 1.0]
         :param value: Value to use when dropout of signal occurs
         :param duration: Sample count in dropout
         :param duration_range: Tuple of min/max dropout counts
-        :param rng: NumPy random number generator to use; defaults to
-            numpy.random.default_rng
+        :param rng: NumPy random number generator to use; defaults to \
+        numpy.random.default_rng
         """
         self.prob = prob
         self.last_value = None
@@ -35,6 +35,7 @@ class StuckTransform(SensorTransformBase):
         """
         Apply transform, calculating if a stuck sensor is occurring and
         returning appropriate value
+
         :param value:
         :return:
         """

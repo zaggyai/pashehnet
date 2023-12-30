@@ -10,6 +10,7 @@ class SquareWaveSource(SensorSourceBase):
     def __init__(self, frequency, sample_rate, duty_cycle=0.5):
         """
         Construct a new SquareWaveSource object
+
         :param frequency: Frequency of the square wave in Hz
         :param sample_rate: Sampling rate in Hz
         :param duty_cycle: Duty cycle of the square wave (default is 0.5)
@@ -22,6 +23,7 @@ class SquareWaveSource(SensorSourceBase):
     def __next__(self):
         """
         Implementation for iterator
+
         :return: Next value from the square wave source
         """
         t = np.linspace(

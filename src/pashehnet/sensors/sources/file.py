@@ -5,10 +5,14 @@ from smart_open import open
 
 
 class FileSource(SensorSourceBase):
+    """
+    Provides a file-based source, one value per line, from a local file or URI
+    """
     def __init__(self, uri, dtype=float):
         """
         Constructor for file source that can read file contents,
         one reading per line.
+
         :param uri: Local filesystem or URI to open file from
         :param dtype: Data type to cast read values from
         """
@@ -19,6 +23,7 @@ class FileSource(SensorSourceBase):
     def __next__(self):
         """
         Implementation for iterator
+
         :return: Next value from source
         """
         if not self.sample:

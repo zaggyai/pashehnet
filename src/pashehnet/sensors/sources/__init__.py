@@ -1,3 +1,6 @@
+"""
+The `pashehnet.sensors.sources` package contains the data sources for sensors.
+"""
 from .base import SensorSourceBase  # noqa: F401
 from .constant import ConstantValueSource  # noqa: F401
 from .sawtoothwave import SawtoothWaveSource  # noqa: F401

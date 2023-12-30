@@ -8,6 +8,7 @@ class StringFormat(SensorFormatBase):
     def __init__(self, tpl, value_field):
         """
         CTOR
+
         :param tpl: Template string to format
         :param value_field: Field in template to place value
         """
@@ -17,8 +18,9 @@ class StringFormat(SensorFormatBase):
     def transform(self, value):
         """
         Transform the value into formatted payload
+
         :param value: Value to transform
-        :return: Formatted payload
+        :return: Formatted string payload
         """
         kwargs = {
             self.value_field: value
