@@ -3,7 +3,7 @@ Provides a simulated sensor network (SSN) framework for publishing to a target
 system.  The package implements both an API and command line interface to provide 
 this service.
 
-This README is intentionally short for tl;dr purposes.  Full documentation can be found [here](#todo).
+This README is intentionally short for tl;dr purposes.  Full documentation can be found [here](https://pashehnet.readthedocs.io).
 
 ## Installation
 
