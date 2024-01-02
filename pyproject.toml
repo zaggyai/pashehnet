@@ -29,6 +29,8 @@ dependencies = [
 
 [project.urls]
 "Homepage" = "https://github.com/zaggyai/pashehnet"
+"Source" = "https://github.com/zaggyai/pashehnet"
+"Documentation" = "https://pashehnet.readthedocs.io"
 "Bug Tracker" = "https://github.com/zaggyai/pashehnet/issues"
 
 [project.scripts]
