@@ -48,5 +48,6 @@ The name **PashehNet** comes from a play on words:
 :maxdepth: 1
 
 cli
+docker
 apidocs/index
 ```
