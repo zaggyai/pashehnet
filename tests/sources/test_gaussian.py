@@ -17,12 +17,12 @@ class TestGaussianPulseSource:
         """
         # Test parameters
         center_frequency, fractional_bandwidth, reference_level = 1000, 0.5, -6
-        cutoff_time, sample_rate, ret_quad, ret_env = -60, 1000, False, False
+        cutoff_time, sample_rate = -60, 1000
 
         # Create GaussianPulseSource object
         src = GaussianPulseSource(
             center_frequency, fractional_bandwidth, reference_level,
-            cutoff_time, sample_rate, ret_quad, ret_env)
+            cutoff_time, sample_rate)
 
         # Generate values from the GaussianPulseSource
         generated_values = [next(src) for _ in range(sample_rate)]
@@ -32,7 +32,7 @@ class TestGaussianPulseSource:
         expected_values = signal.gausspulse(
             t, fc=center_frequency, bw=fractional_bandwidth,
             bwr=reference_level, tpr=cutoff_time,
-            retquad=ret_quad, retenv=ret_env)
+            retenv=False, retquad=False)
 
         # Compare generated values with expected values
         assert generated_values == approx(expected_values)
