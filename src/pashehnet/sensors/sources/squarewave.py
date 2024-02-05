@@ -20,7 +20,6 @@ class SquareWaveSource(SensorSourceBase):
         self.frequency = frequency
         self.sample_rate = sample_rate
         self.duty_cycle = duty_cycle
-        self.time = 0
         self.sample = None
 
     def __next__(self):
