@@ -1,3 +1,5 @@
+from queue import SimpleQueue
+
 import numpy as np
 from scipy import signal
 from .base import SensorSourceBase
@@ -19,7 +21,7 @@ class SawtoothWaveSource(SensorSourceBase):
         self.frequency = frequency
         self.sample_rate = sample_rate
         self.width = width
-        self.time = 0
+        self.sample = None
 
     def __next__(self):
         """
@@ -27,15 +29,18 @@ class SawtoothWaveSource(SensorSourceBase):
 
         :return: Next value from the sawtooth wave source
         """
-        t = np.linspace(
-            self.time,
-            self.time + 1/self.sample_rate,
-            2,
-            endpoint=False
-        )
-        sawtooth_wave = signal.sawtooth(
+        if not self.sample:
+            self._init_sample()
+        val = self.sample.get()
+        self.sample.put(val)
+        return val
+
+    def _init_sample(self):
+        # Leverage Python core FIFO queue for infinite cycle sample
+        self.sample = SimpleQueue()
+        t = np.linspace(0, 1, self.sample_rate, endpoint=False)
+        for x in signal.sawtooth(
             2 * np.pi * self.frequency * t,
             width=self.width
-        )[0]
-        self.time += 1/self.sample_rate
-        return sawtooth_wave
+        ):
+            self.sample.put(x)
