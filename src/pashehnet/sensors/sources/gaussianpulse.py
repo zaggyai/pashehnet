@@ -1,3 +1,5 @@
+from queue import SimpleQueue
+
 import numpy as np
 from scipy import signal
 from .base import SensorSourceBase
@@ -27,7 +29,7 @@ class GaussianPulseSource(SensorSourceBase):
         self.reference_level = reference_level
         self.cutoff_time = cutoff_time
         self.sample_rate = sample_rate
-        self.time = 0
+        self.sample = None
 
     def __next__(self):
         """
@@ -35,10 +37,18 @@ class GaussianPulseSource(SensorSourceBase):
 
         :return: Next value from the Gaussian pulse source
         """
-        t = np.linspace(self.time, self.time + 1/self.sample_rate, 2,
-                        endpoint=False)
-        gaussian_pulse = signal.gausspulse(
-            t, fc=self.center_frequency, bw=self.fractional_bandwidth,
-            bwr=self.reference_level, tpr=self.cutoff_time)[0]
-        self.time += 1/self.sample_rate
-        return gaussian_pulse
+        if not self.sample:
+            self._init_sample()
+        val = self.sample.get()
+        self.sample.put(val)
+        return val
+
+    def _init_sample(self):
+        # Leverage Python core FIFO queue for infinite cycle sample
+        self.sample = SimpleQueue()
+        t = np.linspace(0, 1, self.sample_rate, endpoint=False)
+        for x in signal.gausspulse(
+                t, fc=self.center_frequency, bw=self.fractional_bandwidth,
+                bwr=self.reference_level, tpr=self.cutoff_time,
+                retenv=False, retquad=False):
+            self.sample.put(x)
