@@ -1,3 +1,5 @@
+from queue import SimpleQueue
+
 import numpy as np
 from scipy import signal
 from .base import SensorSourceBase
@@ -18,7 +20,7 @@ class SquareWaveSource(SensorSourceBase):
         self.frequency = frequency
         self.sample_rate = sample_rate
         self.duty_cycle = duty_cycle
-        self.time = 0
+        self.sample = None
 
     def __next__(self):
         """
@@ -26,15 +28,17 @@ class SquareWaveSource(SensorSourceBase):
 
         :return: Next value from the square wave source
         """
-        t = np.linspace(
-            self.time,
-            self.time + 1/self.sample_rate,
-            2,
-            endpoint=False
-        )
-        square_wave = signal.square(
+        if not self.sample:
+            self._init_sample()
+        val = self.sample.get()
+        self.sample.put(val)
+        return val
+
+    def _init_sample(self):
+        self.sample = SimpleQueue()
+        t = np.linspace(0, 1, self.sample_rate, endpoint=False)
+        for x in signal.square(
             2 * np.pi * self.frequency * t,
             duty=self.duty_cycle
-        )[0]
-        self.time += 1/self.sample_rate
-        return square_wave
+        ):
+            self.sample.put(x)
